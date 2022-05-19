@@ -1,0 +1,173 @@
+syntax = "proto3";
+
+import "google/protobuf/struct.proto";
+package adapter_browser_api;
+option java_package = "com.automationanywhere.webbrowser.adapter.browser.dto";
+option java_multiple_files = true;
+
+import "WebTriggers.proto";
+
+message GetTabList {
+};
+
+message TabListResponse {
+    repeated BrowserTabResponse tabs = 1;
+};
+
+message FindTab {
+    oneof find_opt {
+        string name=1;
+        string name_regex=2;
+        string tab_id=3;
+    }
+}
+
+
+message FindTabByRegex {
+    string name_regex=1;
+    string name_regex_flags=2;
+}
+message FindTabResponse {
+    BrowserTabResponse tab = 1;
+}
+message BrowserTabRequest {
+    string tab_id=3;
+};
+
+message BrowserTabResponse {
+    string name = 1;
+    string url = 2;
+    string tab_id=3;
+    string window_id=4;
+    bool isTabActive=5;
+    int64 tab_native_handle = 6;
+};
+
+message BrowserRequest {
+    oneof request_messages {
+       GetTabList get_tab_list = 1;
+       FindTab find_tab = 2;
+       OpenURL open_url = 3;
+       CloseTab close_tab = 4;
+       NavigateSteps navigate_steps = 5;
+       ExtractSource extract_source = 6;
+       ExecuteJavaScript execute_java_script = 7;
+       WaitForDocumentStatus wait_for_documentStatus = 8;
+       FindTabByRegex find_tab_by_regex = 10;
+       RegisterTrigger register_trigger = 11;
+       UnregisterTrigger unregister_trigger = 12;
+    }
+    int32 time_out_ms = 9;
+};
+enum DocumentStatusOpt {
+            UNINITIALIZED=0;
+            LOADING=1;
+            LOADED=2;
+            INTERACTIVE=3;
+            COMPLETE=4;
+            UNKNOWN=5;
+            };
+message WaitForDocumentStatus{
+	DocumentStatusOpt document_status = 1;
+};
+message DocumentStatusResponse {
+		bool result = 1;
+		DocumentStatusOpt document_current_state = 2;
+}
+message NavigateSteps {
+    BrowserTabRequest tab = 1;
+    enum Direction {
+        BACKWARD=0;
+        FORWARD=1;
+    }
+    Direction nav_dir = 2;
+    int32 step_count = 3;
+}
+
+message OpenInExistingTab {
+    BrowserTabRequest browser_tab = 1;
+}
+
+//Opens the provided URL in a new tab in the currently active window or a new window based on OpenOpt
+message OpenInNew {
+    enum OpenOpt {
+            TAB=0;
+            WINDOW=1;
+        };
+    OpenOpt open_with_option = 1;
+    BrowserTabRequest browser_tab = 2;
+}
+
+message OpenURL {
+    string url = 1;
+    oneof open_opt {
+        OpenInExistingTab open_in_existing_tab = 2;
+        OpenInNew open_in_new_tab_window = 3;
+    }
+};
+
+message ErrorResponse {
+    string error_message = 1;
+}
+
+message OpenURLResponse {
+    BrowserTabResponse tab = 1;
+}
+
+message CloseTab {
+    BrowserTabRequest tab_to_close = 1;
+    bool close_containing_win = 2;
+}
+
+message CloseTabResponse {
+}
+
+message NavigateStepsResponse {
+
+}
+
+message ExtractSource {
+    BrowserTabRequest browser_tab = 1;
+}
+
+message ExtractSourceResponse {
+    string source_content = 1;
+}
+
+message ExecuteJavaScript {
+    BrowserTabRequest browser_tab = 1;
+    string java_script_function = 2;
+};
+
+message ExecuteJavaScriptResponse {
+    google.protobuf.Value return_value = 1;
+};
+
+message BrowserResponse {
+    oneof response_messages {
+        TabListResponse tab_list_response = 1;
+        FindTabResponse find_tab_response = 2;
+        OpenURLResponse open_url_response = 3;
+        CloseTabResponse close_tab_response = 4;
+        NavigateStepsResponse navigate_step_response = 5;
+        ErrorResponse error_response =6;
+        ExtractSourceResponse extract_source_response = 7;
+        ExecuteJavaScriptResponse execute_java_script_response = 8;
+        DocumentStatusResponse  document_status_response =9;
+        TriggerResponse trigger_response = 10;
+    }
+};
+
+message RegisterTrigger {
+    string ui_event_id = 1;
+    UIEventRequest ui_event_request = 2;
+}
+
+message UnregisterTrigger {
+    string ui_event_id = 1;
+}
+
+message TriggerResponse {
+    string ui_event_id = 1;
+    string type = 2;
+}

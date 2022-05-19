@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+import "google/protobuf/struct.proto";
+package adapter_browser_api;
+option java_package = "com.automationanywhere.webbrowser.adapter.browser.dto";
+option java_multiple_files = true;
+
+import "bot.proto";
+
+enum UIObjectTriggerModifierKey {
+    UNKNOWN_MODIFIER_KEY=0;
+    ALT=1;
+    CTRL=2;
+    SHIFT=3;
+    META=4;
+    ALTGR=5;
+}
+
+enum UIObjectTriggerAction{
+    UNKNOWN_TRIGGER_ACTION = 0;
+    ENABLE=1;
+    DISABLE=2;
+    SETFOCUS=3;
+    LOSTFOCUS=4;
+    CLICK=5;
+    CHECK=6;
+    UNCHECK=7;
+    SELECT=8;
+    DESELECT=9;
+    SELECTIONCHANGED=10;
+    CHARACTER_KEY=11;
+    CLICK_WITH_HOT_KEY=12;
+    SETFOCUS_WITH_HOT_KEY=13;
+}
+
+enum TriggerErrorType {
+    BROWSER_CLOSED = 0;
+    RUNTIME_EXCEPTION = 1;
+    RE_REGISTER = 2;
+};
+
+message UIObjectTriggerEvent {
+    UIObjectTriggerAction action = 1;
+    repeated UIObjectTriggerModifierKey modifier_keys = 2;
+    repeated int32 shortcut_keys = 3;
+    repeated string shortcut_key_labels = 4;
+}
+
+message UIEventRequest {
+    UIObjectTriggerEvent uiobject_trigger_event = 1;
+    map<string, toolchain.UIObject.SelectionCriterion> selection_criteria = 2;
+    toolchain.WindowValue uiobject_window = 3;
+    string ui_event_uid = 4;
+    toolchain.UIObject.ControlType uiobject_control_type = 5;
+}
+
+message UIEventResponse {
+    string ui_event_uid = 1;
+    string error_message = 2;
+    TriggerErrorType error_type = 3;
+}

@@ -1,0 +1,519 @@
+syntax="proto3";
+
+package toolchain;
+option java_package="com.automationanywhere.botcore.api.dto";
+option java_multiple_files=true;
+
+import "google/protobuf/duration.proto";
+
+message Bot {
+    repeated Node nodes=1;
+    repeated Variable variables=2;
+    repeated Package packages=3;
+    repeated Trigger triggers=4;
+    string work_item_template_name=5;
+    BotProperties properties=6;
+}
+
+message BotProperties {
+    enum AutomationPriority {
+        PRIORITY_MEDIUM=0;
+        PRIORITY_LOW=1;
+        PRIORITY_HIGH=2;
+    }
+
+    bool improved_number_support=1;
+    AutomationPriority automation_priority=2;
+    string bot_code_version=3;
+    google.protobuf.Duration timeout=4;
+}
+
+message Node {
+    string uid=1;
+    string package_id=2;
+    string package_name=3;
+    string command_id=4;
+    string command_name=5;
+    repeated Attribute attributes=6;
+    repeated Node children=8;
+    repeated Node branches=9;
+    Value returnTo=10;
+    bool disabled=11;
+    map<string, Value> returns=12;
+    reserved "packages";
+    reserved 7;
+}
+
+message Package {
+    string id=1;
+    string name=2;
+    string version=3;
+}
+
+message Packages {
+    repeated Package packages=1;
+}
+
+message Attribute {
+    string id=1;
+    string name=2;
+    Value value=3;
+    repeated Attribute attributes=4;
+    Value return_to=5;
+    Attribute group_attribute=6;
+    Attribute operator_attribute=7;
+    enum Operators {
+        NONE=0;
+        AND=1;
+        OR=2;
+    }
+    Operators operator=8;
+}
+
+message CredentialObject{
+    string name=2;
+    string locker_name=3 ;
+    string attribute_name=4;
+}
+
+message RegexFlags{
+    bool multi_line=1;
+    bool dot_all=2;
+    bool case_insensitive=3;
+}
+
+message Value {
+    enum SessionTarget {
+        NONE=0;
+        LOCAL=1;
+        GLOBAL=2;
+        LOCAL_OR_GLOBAL=3;
+    }
+
+    //TODO: Please update the Swagger Doc for deploy-api-supported.yaml if this proto is modified
+    AttributeType type=1;
+    string expression=2;
+    string string=3;
+    string number=4;
+    string boolean=5;
+    string repository=6;
+    string variable_name=7;
+    string package_id=8;
+    string package_name=9;
+    string iterator_id=10;
+    string iterator_name=11;
+    string conditional_id=12;
+    string conditional_name=13;
+    Table table=14;
+    repeated Value list=15;
+    repeated KeyValueItem dictionary=16;
+    TaskbotFile taskbot_file=17;
+    TaskbotInput taskbot_input=18;
+    TaskbotOutput taskbot_output=19;
+    Window window=20;
+    UIObject ui_object=21;
+    Record record=22;
+    string exception_name=23;
+    CredentialObject credential=24;
+    WindowValue ui_object_window=25;
+    Coordinate coordinate=26;
+    string thumbnail_metadata_path=27;
+    string screenshot_metadata_path=28;
+    Region region=29;
+    repeated Property properties=30;
+    string trigger_name=31;
+    NestedStringValue file=32;
+    string form_element_id=33;
+    string form_element_type=34;
+    string form_instance_id=35;
+    HotKey hot_key=36;
+    string queue_name=37;
+    bool taskbot_self=38;
+    NestedStringValue pattern=39;
+    RegexFlags regex_flags=40;
+    RegexFile file_regex=41;
+    NestedStringValue session_name=42;
+    Size2 window_resize=43;
+    NestedNumberValue image_occurrence_index=44;
+    NestedNumberValue image_occurrence_offset_x=45;
+    NestedNumberValue image_occurrence_offset_y=46;
+    KeyValueItem image_occurrence_parameters=47;
+    UIObjectAnchor ui_object_anchor=48;
+    repeated Variable.VariableType variable_map_filter=49;
+    SessionTarget session_target=50;
+    bool securely_recorded=51;
+}
+
+message NestedStringValue {
+    AttributeType type=1;
+    string string=2;
+    string expression=3;
+}
+
+message NestedNumberValue {
+    AttributeType type=1;
+    string number=2;
+    string expression=3;
+}
+
+message RegexFile {
+    NestedStringValue folder=1;
+    RegexFileName name=2;
+}
+
+message RegexFileName {
+    AttributeType type=1;               //only valid type is REGEX
+    repeated NestedStringValue list=2;  //valid types are STRING and PATTERN
+    RegexFlags regex_flags=3;
+}
+
+message Property {
+    Value name=1;
+    Value value=2;
+    bool enabled=3;
+}
+
+message Variable {
+    string key=1;
+    string name=2;
+    string description=3;
+    VariableType type=4;
+    VariableType subtype=5;
+    enum VariableType {
+        UNDEFINED=0;
+        STRING=1;
+        NUMBER=2;
+        BOOLEAN=3;
+        LIST=4;
+        DICTIONARY=5;
+        DATETIME=6;
+        TABLE=7;
+        FILE=8;
+        ANY=9;
+        WINDOW=10;
+        RECORD=11;
+        COORDINATE=12;
+        FORM=13;
+        CREDENTIAL=14;
+        NONE=15;
+        SESSION=16;
+    }
+    Value defaultValue=8;
+    bool input=9;
+    bool output=10;
+    bool workItem=11;
+    repeated RecordSchema schema=12;
+    string session_type=13;
+}
+
+message Record {
+    repeated Schema schema=1;
+    repeated Value values=2;
+}
+
+message Table {
+    repeated Schema schema=1;
+    repeated Row rows=2;
+}
+
+message Row {
+    repeated Value values=1;
+}
+
+message Schema {
+    string name=1;
+    AttributeType type=2;
+    AttributeType subtype=3;
+}
+
+message Size2 {
+    NestedNumberValue height=1;
+    NestedNumberValue width=2;
+}
+
+message RecordSchema {
+    string name=1;
+    enum SchemaValueType {
+        STRING=0;
+        NUMBER=1;
+        BOOLEAN=2;
+        DATETIME=3;
+        FILE=4;
+        WINDOW=5;
+        CREDENTIAL=6;
+        LIST=7;
+        DICTIONARY=8;
+        ANY=9;
+    }
+    SchemaValueType type=2;
+    SchemaValueType subtype=3;
+}
+
+message TaskbotFile {
+    AttributeType type=1;
+    string string=2;
+    bool repository=3;
+    string expression=4;
+}
+
+message TaskbotInput {
+    AttributeType type=1;
+    repeated KeyValueItem dictionary=2;
+    string expression = 3;
+}
+
+message TaskbotOutput {
+    AttributeType type=1;
+    repeated KeyValueItem dictionary=2;
+}
+
+message Window {
+    oneof name_one_of {
+        string name = 1;
+        RegexFileName name_regex = 9;
+    }
+    string path = 2;
+    string class = 3;
+    int64 handle = 4;
+    bool is_child = 5;
+    message Location {
+        int32 top = 1;
+        int32 left = 2;
+    }
+    Location location = 6;
+    message Size {
+        int32 height = 1;
+        int32 width = 2;
+    }
+    Size size = 7;
+    Preset preset_type = 8;
+    enum Preset {
+        NONE = 0;
+        CURRENTLY_ACTIVE = 1;
+        DESKTOP = 2;
+        TASKBAR = 3;
+        BROWSER_TAB_LAST_USED=4;
+    }
+    enum WindowType {
+        NATIVE=0;
+        BROWSER_CHROME=1;
+        BROWSER_IE=2;
+        // BROWSER_EDGE
+        // BROWSER_FIREFOX
+    }
+    WindowType window_type = 10;
+    string browser_tab_url = 11; // This is the tab URL we have captured. Currently we show this in the UI in a readonly field for user to view the URL so it's used. Later this will be editable and can be used for search based on URL
+    bool browser_tab_open_new_window = 12;
+}
+
+message WindowValue {
+    // only valid value for attribute is "WINDOW"
+    AttributeType type=1;
+    Window window=2;
+    string expression=3;
+    Size2 window_resize=4;
+}
+
+message UIObjectAnchor {
+    UIObject ui_object = 1;
+}
+
+message UIObject {
+    enum ControlType {
+        UNKNOWN_CONTROL=0;
+        BUTTON=1;
+        TEXTBOX=2;
+        LINK=3;
+        RADIO=4;
+        CHECKBOX=5;
+        COMBOBOX=6;
+        MENUBAR=7;
+        LISTVIEW=8;
+        TABLE=9;
+        CALENDAR=10;
+        DATEPICKER=11;
+        SLIDER=12;
+        TREE=13;
+        PAGETAB=14;
+        LABEL=15;
+        SCROLLBAR_HORIZONTAL=16;
+        DROPDOWN=17;
+        CLIENT=18;
+        IMAGE_BUTTON=19;
+        ANY_CONTROL=20;
+        PAGETABITEM=21;
+        SCROLLBAR_VERTICAL=22;
+        ACTIVE_TEXT=23;
+        PASSIVE_TEXT=24;
+        VARIABLE_ANCHOR=25;
+        PASSWORD_TEXT=26;
+        WINDOW=27;
+        TOOLBAR=28;
+    }
+    enum TechnologyType {
+        UNKNOWN=0;
+        MS_ACTIVE_ACCESSIBILITY=1;
+        MS_UI_AUTOMATION=2;
+        JAVA=3;
+        SILVERLIGHT=4;
+        FLASH=5;
+        HTML=6;
+        AISENSE=7;
+        SAP=8;
+        ANY_TECHNOLOGY=9;
+        MS_COM_UI_AUTOMATION=10;
+    }
+    enum BrowserType {
+        UNKNOWN_BROWSER=0;
+        IE = 1;
+        MOZILLA = 2;
+        CHROME = 3;
+        ANDROID_BROWSER= 4;
+        EDGE = 5;
+        ANY_BROWSER = 6;
+    }
+    message SelectionCriterion {
+        bool enabled=1;
+        Value value=2;
+    }
+    bytes blob=1;
+    ControlType control_type=2;
+    TechnologyType technology_type=3;
+    map<string, SelectionCriterion> criteria=4;
+    RectangleImageCapture capture=5;
+    BrowserType browser_type=6;
+}
+
+message KeyValueItem {
+    string key=1;
+    Value value=2;
+}
+
+message Region {
+    Value x=1;
+    Value y=2;
+    Value width=3;
+    Value height=4;
+    RectangleImageCapture capture=5;
+}
+
+message RectangleImageCapture {
+    string thumbnail_metadata_path=1;
+    string screenshot_metadata_path=2;
+    Rectangle screenshot_rectangle=3;
+    Rectangle thumbnail_rectangle=4;
+    bool securely_recorded=5;
+}
+
+message Rectangle {
+    int32 x=1;
+    int32 y=2;
+    int32 width=3;
+    int32 height=4;
+}
+
+message Coordinate {
+    Value x=1;
+    Value y=2;
+    PointImageCapture capture=3;
+}
+
+message PointImageCapture {
+    string thumbnail_metadata_path=1;
+    string screenshot_metadata_path=2;
+    Point screenshot_point=3;
+    int32 screenshot_x=4;
+    int32 screenshot_y=5;
+    int32 screenshot_width=6;
+    int32 screenshot_height=7;
+    bool securely_recorded=8;
+}
+
+message Point {
+    int32 x=1;
+    int32 y=2;
+}
+
+// TODO: this is actually a ValueType not an AttributeType, this should be renamed if possible
+enum AttributeType {
+    STRING=0;
+    NUMBER=1;
+    BOOLEAN=2;
+    FILE=3;
+    ITERATOR=4;
+    LIST=5;
+    DICTIONARY=6;
+    TABLE=7;
+    VARIABLE=8;
+    CONDITIONAL=9;
+    WINDOW=10;
+    TASKBOT=11;
+    DATETIME=12;
+    UIOBJECT=13;
+    RECORD=14;
+    EXCEPTION=15;
+    CREDENTIAL=16;
+    COORDINATE=17;
+    IMAGE=18;
+    REGION=19;
+    PROPERTIES=20;
+    TRIGGER=21;
+    CONDITIONALGROUP=22;
+    FORM=23;
+    FORMELEMENT=24;
+    HOTKEY=25;
+    WORKITEM=26;
+    REGEX=27;
+    PATTERN=28;
+    FILEREGEX=29;
+    SESSION=30;
+    IMAGEOCCURRENCE=31;
+    ANY = 32;
+    VARIABLEMAP = 33;
+    PROCESS = 34;
+}
+
+// TODO: These should not be here; they are not part of the bot schema
+message DependencyFilePaths {
+    repeated string file_path=1;
+}
+
+message GetCommandMetricsRequest {
+    string absolute_path=1;
+}
+
+message CommandMetric {
+    string command_name=1;
+    string package_name=2;
+    string package_version=3;
+    int64 command_count=4;
+}
+
+message CommandMetrics {
+    repeated CommandMetric command_metrics=1;
+}
+
+message Trigger {
+    string uid=1;
+    string package_name=2;
+    string trigger_name=3;
+    repeated Attribute attributes=4;
+    bool disabled=5;
+    Value return_to=6;
+}
+
+message ValueMap {
+    map<string, Value> values=1;
+}
+
+message HotKey {
+    enum ModifierKey {
+        CONTROL=0;
+        SHIFT=1;
+        ALT=2;
+        WINDOWS=3;
+        ALT_GRAPH=4;
+    }
+    string key=1;
+    repeated ModifierKey modifier_keys=2;
+}

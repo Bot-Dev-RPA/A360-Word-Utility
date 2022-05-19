@@ -1,0 +1,413 @@
+syntax="proto3";
+
+package toolchain.packages;
+
+option java_package="com.automationanywhere.toolchain.packages.api.dto";
+option java_multiple_files=true;
+
+import "google/protobuf/struct.proto";
+import "bot.proto";
+
+enum PackageStatus {
+    UNKNOWN=0;
+    ENABLED=1;
+    DISABLED=2;
+    DEFAULT=3;
+}
+
+enum Rule {
+    UNKNOWNRULE=0;
+    NOT_EMPTY=1;
+    EQUALS=2;
+    NOT_EQUALS=3;
+    LESS_THAN=4;
+    LESS_THAN_EQUALS=5;
+    GREATER_THAN=6;
+    GREATER_THAN_EQUALS=7;
+    REGEX_MATCH=8;
+    REGEX_NOT_MATCH=9;
+    VARIABLE_TYPE=10;
+    VARIABLE_SUBTYPE=11;
+    VARIABLE_PACKAGE=12;
+    VARIABLE_NOT_PACKAGE=13;
+    VARIABLE_USER_DEFINED=14;
+    FILE_LOCAL=15;
+    FILE_REPOSITORY=16;
+    CODE_TYPE=17;
+    NUMBER_INTEGER=18;
+    FILE_EXTENSION=19;
+    THROWABLE_EXCEPTION=20;
+    FILE_FOLDER=21;
+    EXPRESSION=22;
+    NOT_EXPRESSION=23;
+    ATTRIBUTE_EQUALS=24;
+    ATTRIBUTE_NOT_EQUALS=25;
+    ATTRIBUTE_LESS_THAN=26;
+    ATTRIBUTE_LESS_THAN_EQUALS=27;
+    ATTRIBUTE_GREATER_THAN=28;
+    ATTRIBUTE_GREATER_THAN_EQUALS=29;
+    LIST_TYPE=30;
+    DICTIONARY_TYPE=31;
+    PROPERTIES_UNIQUE=32;
+    EXCEPTION_THROWABLE=33;
+    BEGINS_WITH=34;
+    ENDS_WITH=35;
+    CONTAINS=36;
+    EQUALS_CASE_INSENSITIVE=37;
+    NOT_EQUALS_CASE_INSENSITIVE=38;
+    BEGINS_WITH_CASE_INSENSITIVE=39;
+    ENDS_WITH_CASE_INSENSITIVE=40;
+    CONTAINS_CASE_INSENSITIVE=41;
+    CREDENTIAL_ATTRIBUTE=42;
+    GROUP_CLOSABLE=43;
+    GROUP_CLOSED=44;
+    UIOBJECT_WINDOW=45;
+    WINDOW_SCREEN_EMPTY=46;
+    IMAGE_CAPTURE_WINDOW=47;
+    UIOBJECT_TECHNOLOGY_TYPE=48;
+    UIOBJECT_NOT_TECHNOLOGY_TYPE=49;
+    UIOBJECT_CONTROL_TYPE=50;
+    UIOBJECT_NOT_CONTROL_TYPE=51;
+    FILE_NOT_NETWORK=52;
+    UIOBJECT_CAPTURE_ALLOWED=53;
+    UIOBJECT_CRITERIA_READONLY=54;
+    SELECT_MODES=55;
+    UIOBJECT_CAPTURE_DISABLED=56;
+    HOTKEY_MODIFIER_NOT_EMPTY=57;
+    WARN_EMPTY=58;
+    ENTRYLIST_ADD_LABEL=59;
+    ENTRYLIST_EMPTY_LABEL=60;
+    ENTRYLIST_ENTRY_LABEL=61;
+    ENTRYLIST_ENTRY_UNIQUE=62;
+    ENTRYLIST_MAXIMUM=63;
+    ENTRYLIST_MINUMUM=64;
+    FILE_TYPE=65;
+    RECORDPICKER_MULTIPLE=66;
+    WINDOW_BROWSER=67;
+    WINDOW_NATIVE=68;
+    WINDOW_RESIZE=69;
+    UIOBJECT_WINDOW_RESIZE=70;
+    UIOBJECT_WINDOW_BROWSER=71;
+    UIOBJECT_WINDOW_NATIVE=72;
+    UIOBJECT_ANCHOR=73;
+    IMAGE_OCCURRENCE_OFFSET=74;
+    CREDENTIAL_ALLOW_PASSWORD=75;
+    WINDOW_BROWSER_TAB_LAST_USED=76;
+    WINDOW_BROWSER_TAB_LAST_USED_OPEN_NEW_WINDOW=77;
+    SESSION_OBJECT=78;
+    SESSION_ALLOW_NONEXISTENT=79;
+    FILE_NOT_TYPE_AUTOMATION_ANYWHERE=80;
+    FILE_REPOSITORY_EXPRESSION=81;
+    WINDOW_NOT_PRESET=82;
+    TEXT_UIOBJECT_CRITERIA_SUGGESTIONS=83;
+}
+
+message Package {
+    string name=2;
+    string label=3;
+    string package_version=4;
+    string description=5;
+    string group=8;
+    string artifact_name=9;
+    string code_version=10;
+
+    repeated Trigger triggers=26;
+    repeated Command commands=17;
+    repeated Iterator iterators=18;
+    repeated Variable variables=19;
+    repeated Conditional conditionals=21;
+    repeated Exception exceptions=25;
+    repeated DesktopOperation desktop_operations=27;
+    repeated DesktopOperationStage desktop_operation_stages=28;
+
+    SessionType session_type=29;
+}
+
+message SessionType {
+    string label=1;
+    string description=2;
+}
+
+message Trigger {
+    string name=1;
+    string label=2;
+    string description=3;
+    string node_label=4;
+    string main_class=5;
+    repeated Attribute attributes=6;
+    int64 id=7;
+    string group_label=8;
+    bool nestable=9;
+    bool branchable=10;
+    string branch_of=11;
+    bool branch_end=12;
+    string ancestor_of=13;
+    string icon=14;
+    toolchain.Variable.VariableType return_type=15;
+    toolchain.Variable.VariableType return_subtype=16;
+    google.protobuf.Struct return_to_default=17;
+    string return_label=18;
+    string return_description=19;
+    bool return_required=20;
+    bool hidden=21;
+    bool attribute_only=22;
+    repeated toolchain.RecordSchema return_schema=23;
+    string return_name=24;
+    string minimum_control_room_version=25;
+    string minimum_bot_agent_version=26;
+    bool deprecated=27;
+}
+
+message DesktopOperation {
+    string name=1;
+    string main_class=2;
+}
+
+message DesktopOperationStage {
+    string name=1;
+    repeated Attribute attributes=2;
+    string desktop_operation_name=3;
+    bool remember=4;
+    string label=5;
+    string label_submit=6;
+}
+
+message Command {
+    string name=1;
+    string label=2;
+    string description=3;
+    string node_label=4;
+    string main_class=5;
+    repeated Attribute attributes=6;
+    int64 id=8;
+    string group_label=9;
+    bool nestable=10;
+    bool branchable=11;
+    string branch_of=12;
+    bool branch_end=13;
+    string ancestor_of=14;
+    string property_name=15;
+    string property_description=16;
+    toolchain.Variable.VariableType property_type=17;
+    toolchain.Variable.VariableType property_return_type=18;
+    toolchain.Variable.VariableType property_return_sub_type=19;
+    string property_input_attribute=29;
+    bool recordable=20;
+    string icon=21;
+    toolchain.Variable.VariableType return_type=22;
+    toolchain.Variable.VariableType return_subtype=23;
+    google.protobuf.Struct return_to_default=24;
+    string return_label=25;
+    string return_description=26;
+    bool return_required=27;
+    bool hidden=28;
+    oneof run_from_oneof {
+        bool run_from=30;
+    }
+    oneof run_from_children_oneof {
+        bool run_from_children=31;
+    }
+    oneof text_color_oneof {
+        string text_color=32;
+    }
+    oneof background_color_oneof {
+        string background_color=33;
+    }
+    oneof comment_oneof {
+        bool comment=34;
+    }
+    oneof icon_white_oneof {
+        string icon_white=35;
+    }
+    repeated ReturnVariable returns=36;
+    string return_name=37;
+    repeated toolchain.RecordSchema return_schema=38;
+    string default_branch=39;
+    repeated CommandPropertyArgument property_arguments=40;
+    map<string, google.protobuf.Struct> property_default_values=41;
+    string minimum_control_room_version=42;
+    string minimum_bot_agent_version=43;
+    repeated ReturnSetting return_settings=44;
+    google.protobuf.Struct return_default_value=45;
+    bool deprecated=46;
+}
+
+message CommandPropertyArgument {
+    string description=1;
+    toolchain.Variable.VariableType type=2;
+    google.protobuf.Struct default_value=3;
+    string name=4;
+}
+
+message Attribute {
+    string name=1;
+    string label=2;
+    string node_label=3;
+    AttributeType type=4;
+    string description=5;
+    enum AttributeType {
+        UNKNOWN=0;
+        TEXT=1;
+        NUMBER=2;
+        CHECKBOX=3;
+        SELECT=4;
+        RADIO=5;
+        FILE=6;
+        ITERATOR=7;
+        CONDITIONAL=8;
+        VARIABLE=9;
+        REGEX=10;
+        TEXTAREA=11;
+        CODE=12;
+        GROUP=13;
+        TABS=14;
+        DICTIONARY=15;
+        LIST=16;
+        BOOLEAN=17;
+        TASKBOT=18;
+        WINDOW=19;
+        TABLE=20;
+        UIOBJECT=21;
+        RECORD=22;
+        CREDENTIAL=23;
+        EXCEPTION=24;
+        KEYPRESS=25;
+        VARIABLEMAP=26;
+        DATETIME=27;
+        PROPERTIES=28;
+        COORDINATE=29;
+        HELP=30;
+        PDFLOCATORMAP=31;
+        IMAGE=32;
+        REGION=33;
+        TRIGGER=34;
+        FORM=35;
+        FORMELEMENT=36;
+        WORKITEM=37;
+        HOTKEY=38;
+        ENTRYLIST=39;
+        DESKTOPOPERATIONBUTTON=40;
+        DESKTOPOPERATIONSELECT=41;
+        TREE=42;
+        RECORDPICKER=43;
+        FILE2=44;
+        SESSION=45;
+        HTML=46;
+        IMAGEOCCURRENCE=47;
+        BAPIWORKFLOW=48;
+        PROCESS=49;
+    }
+    google.protobuf.Struct default_value=6;
+    int64 id=7;
+    repeated Option options=8;
+    repeated Attribute attributes=9;
+    repeated AttributeRule rules=10;
+    bool hidden=11;
+    bool read_only=12;
+    ExternalOptions external_options=13;
+    reserved 14;
+    string desktop_operation_name=15;
+    repeated string desktop_operation_attribute_names=16;
+    string change_desktop_operation_name=17;
+    repeated string change_desktop_operation_attribute_names=18;
+    google.protobuf.Struct data=19;
+    repeated string desktop_operation_optional_attribute_names=20;
+}
+
+message ReturnVariable {
+    string name=1;
+    toolchain.Variable.VariableType type=2;
+    toolchain.Variable.VariableType subtype=3;
+    string label=4;
+    string description=5;
+    bool required=6;
+    repeated toolchain.RecordSchema schema=7;
+}
+
+enum ReturnSetting {
+    NONE=0;
+    SESSION_TARGET=1;
+}
+
+message Iterator {
+    string name=1;
+    string label=2;
+    string description=3;
+    string node_label=4;
+    string main_class=5;
+    repeated Attribute attributes=6;
+    int64 id=7;
+    string group_label=8;
+    repeated string variable_names=9;
+    toolchain.Variable.VariableType return_type=10;
+    toolchain.Variable.VariableType return_subtype=11;
+    google.protobuf.Struct return_to_default=12;
+    string return_label=13;
+    string return_description=14;
+    bool return_required=15;
+    repeated toolchain.RecordSchema return_schema=16;
+    string return_name=17;
+    string minimum_control_room_version=18;
+    string minimum_bot_agent_version=19;
+    bool deprecated=20;
+}
+
+message Option {
+    int64 id=1;
+    string name=2;
+    string label=3;
+    string value=4;
+    string node_label=5;
+    repeated Attribute attributes=6;
+    toolchain.Variable.VariableType return_type=7;
+    toolchain.Variable.VariableType return_subtype=8;
+    string return_name=9;
+    repeated toolchain.RecordSchema return_schema=10;
+}
+
+message AttributeRule {
+    int64 id=1;
+    Rule name=2;
+    string value=3;
+}
+
+message Conditional {
+    int64 id=1;
+    string name=2;
+    string label=3;
+    string description=4;
+    string node_label=5;
+    string main_class=6;
+    repeated Attribute attributes=7;
+    string minimum_control_room_version=8;
+    string minimum_bot_agent_version=9;
+    bool deprecated=10;
+}
+
+message Variable {
+    string name=1;
+    toolchain.Variable.VariableType type=2;
+    string description=3;
+    bool system_variable=4;
+    int64 id=5;
+    string main_class=6;
+    toolchain.Variable.VariableType subtype=7;
+    string minimum_control_room_version=8;
+    string minimum_bot_agent_version=9;
+    bool deprecated=10;
+}
+
+message ExternalOptions {
+    int64 id=1;
+    string path=2;
+}
+
+message Exception {
+    string name=1;
+    string label=2;
+    string description=3;
+    string code=4;
+    string main_class=5;
+    bool throwable=6;
+    bool deprecated=7;
+}

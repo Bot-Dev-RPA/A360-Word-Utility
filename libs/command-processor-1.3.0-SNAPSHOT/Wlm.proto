@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package wlm;
+option java_package = "com.automationanywhere.bot.wlm.api.dto";
+option java_multiple_files = true;
+
+import "google/protobuf/struct.proto";
+
+message WLMResponse {
+    JsonData json_data = 1;
+}
+
+message JsonData {
+    string id = 1;
+    map<string, string> cells = 2;
+    bool success = 3;
+}
+
+message WorkItemStatusUpdateRequest {
+    enum WorkItemStatus {
+        SUCCEED = 0;
+        FAILED = 1;
+    }
+    WorkItemStatus work_item_status = 1;
+    string error_message = 2;
+    string result = 3;
+}

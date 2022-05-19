@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package bot;
+option java_package = "com.automationanywhere.bot.api.dto";
+option java_multiple_files = true;
+
+message PackageRequest {
+    string package_name = 1; //provided by recorder
+    string version = 2; // provided by recorder
+    string download_file_location = 3; // provided by BL
+    string identifier = 4; // provided by BL
+    string cr_base_url = 5; // provided by BL
+    string user_token = 6; // provided by BL
+}
+
+message PackageResponse {
+    string identifier = 1; // provided by BL
+    string local_path = 2; // provided by BL
+    repeated EmbeddedResource embedded_resources = 3;
+}
+
+message EmbeddedResource {
+    string uri = 1;
+    string local_path = 2;
+}

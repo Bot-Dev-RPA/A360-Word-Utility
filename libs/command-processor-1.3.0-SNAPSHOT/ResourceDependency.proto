@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package bot;
+option java_package = "com.automationanywhere.bot.api.dto";
+option java_multiple_files = true;
+
+message ResourceResolveRequest {
+    oneof input {
+        string file_uri = 1;
+        Image image = 2;
+    }
+
+    message Image {
+        // Image is always an item from within a Bot context. Hence bot file id is a requirement.
+        // FIXME: can it be resolved from GSC itself? Currently supplied to a BotCommand as an Attribute.
+        int64 bot_file_id = 1;
+        string image_path = 2;
+    }
+}
+
+message ResourceDownloadRequest {
+    string download_file_url = 1;
+    string request_id = 2;
+    string cr_base_url = 3;
+    string user_token = 4;
+    string user_name = 5;
+    FileType file_type = 6;
+}
+
+enum FileType {
+    REGULAR = 0;
+    CR_DATA = 1;
+}
+
+message ResourceProgressResponse {
+    string request_id = 1;
+    int64 current_progress = 2;
+    int64 total_progress = 3;
+}
+
+message ResourceResponse {
+    string request_id = 1;
+    oneof result {
+        string local_path = 2;
+        string error = 3;
+    }
+}
+
+message PackageDynamicResource {
+    string resourceName = 1;
+    string fileHash = 2;
+}
+
+message PackageDynamicResources {
+    repeated PackageDynamicResource resources = 1;
+}

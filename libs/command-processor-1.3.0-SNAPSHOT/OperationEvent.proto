@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package bot;
+option java_package = "com.automationanywhere.bot.api.dto";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+
+message OperationEvent {
+    EventData eventData = 2;
+    bool packageDownload = 3;
+}
+
+message EventData {
+    string id = 1;
+    oneof data {
+        DeploymentReceived deployment_received = 2;
+        AutoLogin auto_login = 3;
+        BotDeploymentStage bot_deployment_stage = 4;
+        BotExecution bot_execution = 5;
+        BotDebugExecution bot_debug_execution = 6;
+        ChildBotDownloadRequest child_bot_download_request = 7;
+    }
+}
+
+message ChildBotDownloadRequest {
+    string botUri = 1;
+    string deployment_id = 2;
+    string workspace_type = 3;
+    string identifier = 4;
+}
+
+message DeploymentReceived {
+    string message = 1;
+}
+
+message AutoLogin {
+    string message = 1;
+    StatusType status_type = 2;
+}
+
+message BotExecution {
+    string bot_id = 1; // an identifier for bot to identify all the status messages associated to it.
+    string parent_bot_id = 2; // non-empty indicates a child bot and the parent it is associated to.
+    google.protobuf.Timestamp start_date_time = 3;
+    google.protobuf.Timestamp end_date_time = 4;
+    Progress progress = 5;
+    string message = 6;
+    string current_node_id = 7;
+    StatusType status_type = 8;
+    bool progress_nondeterministic = 10;
+    string bot_uri = 11;
+    map<string, bytes> bot_out_variables = 12;
+}
+
+message BotDebugExecution {
+    string node_id = 1;
+    StatusType status = 2;
+    map<string, bytes> variable_state = 3;
+}
+
+message BotDeploymentStage {
+    int32 stage_total = 1;
+    int32 stage_current = 2;
+    enum Stages {
+        PRE_PROCESSING = 0;
+        DOWNLOAD_DEPENDENCIES = 1;
+        AUTO_LOGIN = 2;
+        ACQUIRING_DEVICE = 3;
+        COMPILING_BOT = 4;
+        NOTIFYING_DEVICE = 5;
+        // If adding another stage, please update Constants.TOTAL_BOT_DEPLOYMENT_STAGES value in bot-api.
+    }
+    Stages stage_name = 3;
+    int64 progress_total = 4;
+    int64 progress_current = 5;
+    enum ProgressUnits {
+        BYTES = 0;
+        COUNT = 1;
+    };
+    ProgressUnits progress_unit = 6;
+    string progress_description = 7;
+    bool progress_nondeterministic = 8;
+}
+
+message Progress {
+    string name = 1;            // Human readable name for the item for display could be command name / bot name / download item name ..
+    int64 current = 2;
+    int64 total = 3;
+    int32 percentage = 4;
+}
+
+enum StatusType {
+    UNKNOWN = 0;
+    STARTED = 1;
+    RUNNING = 2;
+    PAUSED = 3;
+    COMPLETED = 4;
+    FAILED = 5;
+    ABORTED = 6;
+    TIMED_OUT = 7;
+    BREAKPOINT_CONFIRMATION = 8;
+    WATCHER_CONFIRMATION = 9;
+    DONE = 10;
+    DEPLOYED = 11;
+    INPROGRESS = 12;
+    STOPPED = 13;
+    DEPLOY_FAILED = 14;
+    QUEUED = 15;
+    PENDING_EXECUTION = 16;
+}
